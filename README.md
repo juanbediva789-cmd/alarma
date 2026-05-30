@@ -145,7 +145,73 @@ flowchart LR
     UC1 -.->|include| UC1_1
     UC1 -.->|include| UC1_2
     UC1 -.->|include| UC1_3
-    
+
     UC5 -.->|extend| UC4
     UC3 -.->|extend| UC2
+
+
+## 9. Especificación de casos de uso
+
+A continuación, se detalla la lógica de interacción de los procesos más importantes del sistema, siguiendo la plantilla de especificación funcional requerida.
+
+### Caso de Uso 1: Crear Alarma
+* **Nombre:** Crear Alarma.
+* **Objetivo:** Permitir al usuario configurar y guardar una nueva alarma en el sistema, definiendo su hora, repetición y comportamiento.
+* **Actor principal:** Usuario.
+* **Precondiciones:** El sistema principal (`AlarmManager`) debe estar inicializado y ejecutándose correctamente en memoria.
+* **Flujo principal:**
+  1. El usuario inicia la acción para crear una nueva alarma.
+  2. El sistema solicita que se introduzca la hora y los minutos.
+  3. El usuario introduce el tiempo deseado (por ejemplo, `07:30`).
+  4. El sistema pide los parámetros adicionales: etiqueta identificativa, días de repetición y categoría (Trabajo, Deporte, etc.).
+  5. El usuario proporciona todos los datos solicitados.
+  6. El sistema crea una nueva instancia de la clase `Alarm`, le asigna un identificador único autogenerado (UUID) y la almacena en la lista de alarmas del sistema.
+  7. El sistema muestra un mensaje por consola confirmando que la alarma ha sido guardada exitosamente.
+* **Flujos alternativos:**
+  * *3a. Formato de hora incorrecto:* Si el usuario introduce una hora no válida (ej. `25:99`), el sistema muestra un mensaje de error advirtiendo del formato incorrecto y vuelve al paso 2 para solicitar la hora nuevamente.
+  * *5a. Omisión de días de repetición:* Si el usuario no selecciona ningún día de la semana específico, el sistema asume una alarma eventual y la configura para que suene una única vez dentro de las próximas 24 horas.
+* **Postcondiciones:** La nueva alarma queda registrada de forma segura en la memoria del sistema y programada con su estado inicial activo (`isActive = true`).
+* **Reglas de negocio:** * La etiqueta descriptiva de la alarma no puede superar los 50 caracteres para evitar desbordamientos de memoria. 
+  * Si el usuario no especifica un perfil de sonido, el sistema asignará uno por defecto con el volumen ajustado al 50%.
+
+---
+
+### Caso de Uso 2: Detener Alarma con Reto Matemático
+* **Nombre:** Detener Alarma mediante Reto Matemático.
+* **Objetivo:** Asegurar el despertar efectivo del usuario exigiéndole la resolución mental de una operación matemática antes de permitirle silenciar el dispositivo.
+* **Actor principal:** Usuario.
+* **Precondiciones:** Una alarma debe haber alcanzado su hora de activación, encontrarse en estado "Sonando", y tener vinculada la funcionalidad avanzada `MathChallenge`.
+* **Flujo principal:**
+  1. El usuario interactúa con el sistema intentando detener la alarma que está sonando.
+  2. El sistema comprueba la configuración interna y detecta que el reto matemático está activado para esta alarma en particular.
+  3. El sistema genera una operación matemática aleatoria según la dificultad (ej. `14 + 27`) y la muestra por pantalla.
+  4. El usuario calcula mentalmente y teclea la respuesta.
+  5. El sistema valida que la respuesta introducida coincide con el resultado correcto, silencia inmediatamente el perfil de sonido (`SoundProfile`) y desactiva el disparador actual de la alarma.
+* **Flujos alternativos:**
+  * *4a. Respuesta incorrecta:* Si el usuario introduce un resultado numérico erróneo, el sistema notifica el fallo, mantiene el sonido de la alarma activo a volumen máximo y genera automáticamente una nueva operación matemática para intentarlo de nuevo.
+* **Postcondiciones:** La alarma queda completamente silenciada. Si tiene una repetición semanal programada (ej. de lunes a viernes), el sistema la deja a la espera del próximo día correspondiente; de lo contrario, su estado general pasa a inactivo.
+* **Reglas de negocio:** * Una vez que la alarma comienza a sonar bajo esta configuración, el sistema bloquea cualquier otra forma de apagarla (incluso la función de posponer o *Snooze* queda deshabilitada) hasta que el problema matemático sea resuelto con éxito.
+
+
+Durante el desarrollo de esta práctica, se tomaron varias decisiones arquitectónicas importantes:
+
+Gestión del tiempo: Se optó por utilizar LocalTime en la clase Alarm ya que las alarmas generalmente se configuran para una hora del día, independientemente de la fecha. La comparación temporal real se realiza en el AlarmManager usando LocalDateTime para manejar correctamente el paso de los días y las repeticiones semanales.
+
+Identificadores únicos: Para evitar conflictos entre alarmas duplicadas (ej: dos alarmas a las 07:00), se implementó java.util.UUID, asegurando que el borrado o edición afecte exactamente a la instancia correcta.
+
+Deuda técnica futura: Al carecer de una base de datos, las alarmas residen en memoria RAM. Una mejora futura fundamental sería implementar un patrón de persistencia (como guardar los datos en un archivo JSON) para que las alarmas sobrevivan al cierre del programa.
+
+
+En este proyecto, se utilizó IA generativa (Gemini) principalmente como herramienta de asistencia para la arquitectura de software y documentación:
+
+Uso de la IA: Se utilizó para generar la sintaxis de los diagramas Mermaid, ya que la documentación oficial puede ser propensa a errores tipográficos. También se empleó como "sparring" para validar el diseño de clases y discutir si una relación debía ser de composición o agregación.
+
+Prompts destacados: "Genera el código Mermaid para un diagrama de casos de uso basado en estos requisitos..." y "Revisa esta estructura de clases, ¿estoy rompiendo el principio de Responsabilidad Única?"
+
+Errores y validación manual: La IA inicialmente sugirió diagramas con una sintaxis que no era 100% compatible con el renderizador nativo de GitHub (errores al usar genéricos como List<Alarm>). Tuve que iterar y modificar manualmente el código Mermaid para usar arrays clásicos (Alarm[]) logrando que se visualizara correctamente en el repositorio.
+
+Aprendizaje: Comprobé que la IA es excelente para estructurar ideas ("scaffolding"), pero la lógica de negocio final, la resolución de bugs en el IDE y la compilación dependieron íntegramente de mi comprensión del lenguaje Java.
+
+
+
 
