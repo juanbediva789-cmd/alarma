@@ -1,31 +1,34 @@
-# alarma
 ```mermaid
-usecaseDiagram
-    actor Usuario
-    
-    package "Sistema de Alarma Inteligente" {
-        usecase "Gestionar Alarmas" as UC1
-        usecase "Crear Alarma" as UC1_1
-        usecase "Eliminar Alarma" as UC1_2
-        usecase "Activar/Desactivar Alarma" as UC1_3
-        
-        usecase "Sonar Alarma" as UC2
-        usecase "Posponer Alarma (Snooze)" as UC3
-        usecase "Detener Alarma" as UC4
-        usecase "Resolver Reto Matemático" as UC5
-        usecase "Activar Modo Vacaciones" as UC6
-        usecase "Consultar Próximas Alarmas" as UC7
-    }
+flowchart LR
+    %% Definición del Actor
+    Usuario((Usuario))
 
+    %% Límite del Sistema
+    subgraph Sistema ["Sistema de Alarma Inteligente"]
+        UC1(Gestionar Alarmas)
+        UC1_1(Crear Alarma)
+        UC1_2(Eliminar Alarma)
+        UC1_3(Activar/Desactivar Alarma)
+        
+        UC2(Sonar Alarma)
+        UC3(Posponer Alarma - Snooze)
+        UC4(Detener Alarma)
+        UC5(Resolver Reto Matemático)
+        UC6(Activar Modo Vacaciones)
+        UC7(Consultar Próximas Alarmas)
+    end
+
+    %% Relaciones del Actor con los Casos de Uso
     Usuario --> UC1
     Usuario --> UC3
     Usuario --> UC4
     Usuario --> UC6
     Usuario --> UC7
+
+    %% Relaciones Include y Extend
+    UC1 -.->|include| UC1_1
+    UC1 -.->|include| UC1_2
+    UC1 -.->|include| UC1_3
     
-    UC1 ..> UC1_1 : <<include>>
-    UC1 ..> UC1_2 : <<include>>
-    UC1 ..> UC1_3 : <<include>>
-    
-    UC4 <.. UC5 : <<extend>>
-    UC2 ..> UC3 : <<extend>>
+    UC5 -.->|extend| UC4
+    UC3 -.->|extend| UC2
