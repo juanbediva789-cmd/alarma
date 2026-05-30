@@ -33,14 +33,15 @@ flowchart LR
     UC5 -.->|extend| UC4
     UC3 -.->|extend| UC2
 
+```mermaid
 classDiagram
     class AlarmManager {
-        -List~Alarm~ alarms
+        -Alarm[] alarms
         -boolean vacationMode
         +addAlarm(Alarm alarm) void
         +removeAlarm(UUID id) void
         +toggleVacationMode() void
-        +getNextActiveAlarms() List~Alarm~
+        +getNextActiveAlarms() Alarm[]
         +checkAndTriggerAlarms(LocalDateTime now) void
     }
 
@@ -60,7 +61,7 @@ classDiagram
     }
 
     class RepeatDays {
-        -EnumSet~DayOfWeek~ days
+        -DayOfWeek[] days
         +addDay(DayOfWeek day) void
         +removeDay(DayOfWeek day) void
         +isActiveOn(DayOfWeek day) boolean
@@ -102,4 +103,3 @@ classDiagram
     Alarm "1" *-- "0..1" SnoozeManager : controla
     Alarm "1" --> "1" Category : clasificada en
     Alarm "1" *-- "0..1" MathChallenge : requiere
-
