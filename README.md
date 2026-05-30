@@ -1,4 +1,5 @@
 # alarma
+```mermaid
 usecaseDiagram
     actor Usuario
     
@@ -28,72 +29,3 @@ usecaseDiagram
     
     UC4 <.. UC5 : <<extend>>
     UC2 ..> UC3 : <<extend>>
-
-    classDiagram
-    class AlarmManager {
-        -List~Alarm~ alarms
-        -boolean vacationMode
-        +addAlarm(Alarm) void
-        +removeAlarm(UUID) void
-        +toggleVacationMode() void
-        +getNextActiveAlarms() List~Alarm~
-        +checkAndTriggerAlarms(LocalDateTime) void
-    }
-
-    class Alarm {
-        -UUID id
-        -LocalTime time
-        -String label
-        -boolean isActive
-        -RepeatDays repeatDays
-        -SoundProfile sound
-        -Category category
-        -MathChallenge challenge
-        +toggle() void
-        +snooze(int minutes) void
-        +stop() void
-        +isTriggerTime(LocalDateTime) boolean
-    }
-
-    class RepeatDays {
-        -EnumSet~DayOfWeek~ days
-        +addDay(DayOfWeek) void
-        +removeDay(DayOfWeek) void
-        +isActiveOn(DayOfWeek) boolean
-    }
-
-    class SoundProfile {
-        -String soundFile
-        -int volumeLevel
-        +play() void
-    }
-
-    class SnoozeManager {
-        -int snoozeCount
-        -int maxSnoozes
-        -int snoozeDurationMinutes
-        +calculateNextTrigger(LocalTime) LocalTime
-        +canSnooze() boolean
-    }
-
-    class Category {
-        <<enumeration>>
-        WORK
-        STUDY
-        SPORTS
-        MEDICINE
-        GENERAL
-    }
-
-    class MathChallenge {
-        -Difficulty level
-        +generateProblem() String
-        +verifyAnswer(int) boolean
-    }
-
-    AlarmManager "1" *-- "0..*" Alarm : gestiona
-    Alarm "1" *-- "1" RepeatDays : tiene
-    Alarm "1" *-- "1" SoundProfile : reproduce
-    Alarm "1" *-- "0..1" SnoozeManager : permite
-    Alarm "1" o-- "1" Category : pertenece a
-    Alarm "1" *-- "0..1" MathChallenge : requiere
